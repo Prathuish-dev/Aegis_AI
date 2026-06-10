@@ -90,9 +90,9 @@ Unlike traditional AI projects that focus on building models, Aegis AI focuses o
 ## 🛠️ Tech Stack
 
 * **Language:** Python
-* **LLM:** OpenAI / Local Models
-* **Frameworks:** LangChain / LlamaIndex
-* **Vector DB:** FAISS / ChromaDB
+* **LLM:** OpenAI / Groq / Local Models (Ollama)
+* **Frameworks:** LangChain / LangGraph
+* **Vector DB:** ChromaDB / FAISS
 * **Containerization:** Docker
 * **UI (Optional):** Streamlit
 * **API (Optional):** FastAPI

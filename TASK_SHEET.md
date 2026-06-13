@@ -100,9 +100,9 @@ Message here.
 | **1.3** | Define all Pydantic data models: `AnomalyEvent`, `MetricType`, `FailureCategory` in `src/monitoring/models.py` | Agent-A | 1.2 | ✅ Completed | **SCHEMA FROZEN** after this. → READY FOR Agent-B, Agent-C, Agent-D |
 | **1.4** | Implement `LogCollector` class with SQLite persistence and `_init_db()` in `src/monitoring/log_collector.py` | Agent-A | 1.3 | ✅ Completed | `_init_db()` creates events table; env-driven db_path via `LOG_DB_PATH` |
 | **1.5** | Implement `MetricTracker` class for polling numerical metrics in `src/monitoring/metric_tracker.py` | Agent-A | 1.3 | ✅ Completed | Tracks accuracy, latency, error_rate with sliding window<br>[2026-06-13 21:03] [Agent-A] [STATUS_CHANGE] Task started.<br>[2026-06-13 21:10] [Agent-A] [HANDOFF] MetricTracker class implemented. Exposes calculate_sliding_average(), calculate_p95(), get_stats(), record_metric() and poll_from_db(). File: src/monitoring/metric_tracker.py. Branch: feature/agent-a-phase1. → READY FOR Agent-B, Agent-E |
-| **1.6** | Write sample log generator script `scripts/generate_sample_logs.py` for dev/testing | Agent-E | 1.4 | ⏳ Pending | Generates 5 failure scenario logs for each category |
+| **1.6** | Write sample log generator script `scripts/generate_sample_logs.py` for dev/testing | Agent-E | 1.4 | 🔄 In Progress | [2026-06-13 21:16] [Agent-E] [STATUS_CHANGE] Task started. |
 | **1.7** | Set up `config/settings.yaml` with all detection thresholds and system settings | Agent-A | 1.2 | ✅ Completed | Thresholds: accuracy drop ≥5%, latency P95 ≥2000ms, error rate ≥2%<br>[2026-06-13 21:03] [Agent-A] [STATUS_CHANGE] Task started.<br>[2026-06-13 21:10] [Agent-A] [HANDOFF] config/settings.yaml populated with thresholds, DB paths, and model parameters. Branch: feature/agent-a-phase1. → READY FOR Agent-B, Agent-E |
-| **1.8** | Write unit tests for `LogCollector` and `MetricTracker` in `tests/test_monitoring.py` | Agent-E | 1.4, 1.5 | ⏳ Pending | Test: ingest, retrieve, schema validation |
+| **1.8** | Write unit tests for `LogCollector` and `MetricTracker` in `tests/test_monitoring.py` | Agent-E | 1.4, 1.5 | 🔄 In Progress | [2026-06-13 21:16] [Agent-E] [STATUS_CHANGE] Task started. |
 
 ---
 
@@ -140,11 +140,11 @@ Message here.
 
 | Task ID | Task Description | Assigned Agent(s) | Dependencies | Status | Notes / Hand-off |
 |---|---|---|---|---|---|
-| **4.1** | Define `AegisAgentState` TypedDict in `src/agent/state.py` | Agent-D | 1.3 | ⏳ Pending | Fields: anomaly_description, retrieved_context, root_cause, fix_recommendation, confidence_score, requires_human_review, iteration_count |
+| **4.1** | Define `AegisAgentState` TypedDict in `src/agent/state.py` | Agent-D | 1.3 | ✅ Completed | Fields: anomaly_description, retrieved_context, root_cause, fix_recommendation, confidence_score, requires_human_review, iteration_count<br>[2026-06-13 21:16] [Agent-D] [STATUS_CHANGE] Task started.<br>[2026-06-13 21:20] [Agent-D] [HANDOFF] AegisAgentState TypedDict defined in src/agent/state.py. Branch: feature/agent-d-phase1. → READY FOR Agent-D (Task 4.2), Agent-E |
 | **4.2** | Implement all agent node functions (`retrieve_context_node`, `analyze_anomaly_node`, `classify_failure_node`, `generate_fix_node`, `human_review_node`, `apply_fix_node`) in `src/agent/nodes.py` | Agent-D | 4.1, 3.4 | ⏳ Pending | Each node must update state and log via structured logger |
 | **4.3** | Implement `route_after_fix()` conditional router (returns `"human_review"` if confidence < 80, else `"apply_fix"`) | Agent-D | 4.2 | ⏳ Pending | Threshold configurable in `settings.yaml` |
 | **4.4** | Build LangGraph state machine using corrected topology: all nodes declared, `human_review → apply_fix → END`, `interrupt_before=["human_review"]` in `src/agent/graph.py` | Agent-D | 4.2, 4.3 | ⏳ Pending | Use `MemorySaver` checkpointer; `interrupt_before` on `compile()` only |
-| **4.5** | Define Chain-of-Thought prompt templates in `src/agent/prompts.py` | Agent-D | 4.1 | ⏳ Pending | Structured JSON output: root_cause, failure_category, fix_recommendation, confidence_score, knowledge_references |
+| **4.5** | Define Chain-of-Thought prompt templates in `src/agent/prompts.py` | Agent-D | 4.1 | ✅ Completed | Structured JSON output: root_cause, failure_category, fix_recommendation, confidence_score, knowledge_references<br>[2026-06-13 21:16] [Agent-D] [STATUS_CHANGE] Task started.<br>[2026-06-13 21:20] [Agent-D] [HANDOFF] Prompt templates with escaped schema curly braces defined in src/agent/prompts.py. Branch: feature/agent-d-phase1. → READY FOR Agent-D (Task 4.2), Agent-E |
 | **4.6** | End-to-end integration test: simulate each of 5 failure types → verify agent produces valid JSON diagnosis | Agent-D, Agent-E | 4.4, 4.5, 2.6, 3.4 | ⏳ Pending | Use mocked LLM responses to avoid API cost in CI |
 | **4.7** | Write unit tests for graph routing logic and state transitions in `tests/test_agent.py` | Agent-E | 4.4 | ⏳ Pending | Test: low-confidence routes to human_review; high-confidence skips it |
 
@@ -185,13 +185,13 @@ Message here.
 
 | Phase | Total Tasks | Completed ✅ | In Progress 🔄 | Blocked 🛑 | Pending ⏳ |
 |---|---|---|---|---|---|
-| Phase 1 — Foundation | 8 | 4 | 2 | 0 | 2 |
+| Phase 1 — Foundation | 8 | 6 | 2 | 0 | 0 |
 | Phase 2 — Detection | 8 | 2 | 0 | 0 | 6 |
 | Phase 3 — RAG | 8 | 2 | 0 | 0 | 6 |
-| Phase 4 — Agent | 7 | 0 | 0 | 0 | 7 |
+| Phase 4 — Agent | 7 | 2 | 0 | 0 | 5 |
 | Phase 5 — Healing | 7 | 0 | 0 | 0 | 7 |
 | Phase 6 — UI/API | 10 | 0 | 0 | 0 | 10 |
-| **TOTAL** | **48** | **8** | 2 | **0** | **38** |
+| **TOTAL** | **48** | **12** | 2 | **0** | **34** |
 
 ---
 

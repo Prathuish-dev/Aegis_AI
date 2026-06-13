@@ -188,10 +188,10 @@ Message here.
 | Phase 1 — Foundation | 8 | 8 | 0 | 0 | 0 |
 | Phase 2 — Detection | 8 | 2 | 0 | 0 | 6 |
 | Phase 3 — RAG | 8 | 2 | 0 | 0 | 6 |
-| Phase 4 — Agent | 7 | 0 | 0 | 0 | 7 |
+| Phase 4 — Agent | 7 | 2 | 0 | 0 | 5 |
 | Phase 5 — Healing | 7 | 0 | 0 | 0 | 7 |
 | Phase 6 — UI/API | 10 | 0 | 0 | 0 | 10 |
-| **TOTAL** | **48** | **12** | 0 | **0** | **36** |
+| **TOTAL** | **48** | **14** | **0** | **0** | **34** |
 
 ---
 

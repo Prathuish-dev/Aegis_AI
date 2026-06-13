@@ -112,11 +112,11 @@ Message here.
 |---|---|---|---|---|---|
 | **2.1** | Implement `DetectionRule` dataclass and `RuleEngine` with `_check()` for `lt`, `gt`, `delta_pct` operators in `src/detection/rule_engine.py` | Agent-B | 1.3 | ✅ Completed | [2026-06-13 21:15] [Agent-B] [HANDOFF] DetectionRule and RuleEngine implemented in src/detection/rule_engine.py. Supports lt, gt, delta_pct operators and yaml config loading. Branch: feature/agent-b-phase1. → READY FOR Agent-D, Agent-E |
 | **2.2** | Implement `DriftDetector` with KS test (`detect_feature_drift`) and corrected PSI (`compute_psi`) in `src/detection/drift_detector.py` | Agent-B | 1.3 | ✅ Completed | [2026-06-13 21:15] [Agent-B] [HANDOFF] DriftDetector implemented in src/detection/drift_detector.py. Supports detect_feature_drift (KS test) and compute_psi (shared bin edges). Branch: feature/agent-b-phase1. → READY FOR Agent-D, Agent-E |
-| **2.3** | Implement `DataIssueDetector` with `detect_covariate_drift` (KS + `chi2_contingency`) and `detect_schema_drift` in `src/detection/data_issue_detector.py` | Agent-B | 2.2 | ⏳ Pending | `chi2_contingency` on `pd.crosstab` — see doc/06 |
-| **2.4** | Implement `ModelPerformanceDetector` with sliding window accuracy/F1/AUC monitoring in `src/detection/model_performance_detector.py` | Agent-B | 1.3 | ⏳ Pending | Configurable window_hours and drop_threshold |
-| **2.5** | Implement module-level `RelevanceScorer` singleton (SentenceTransformer loaded once) in `src/detection/relevance_scorer.py` | Agent-B | 1.3 | ⏳ Pending | Model: `BAAI/bge-small-en-v1.5`; never instantiate inside function |
-| **2.6** | Implement unified `AnomalyDetector` facade combining 2.1–2.5, outputting `AnomalyEvent` schema | Agent-B | 2.1, 2.2, 2.3, 2.4, 2.5 | ⏳ Pending | → READY FOR Agent-D after this |
-| **2.7** | Implement `SystemIssueDetector` with regex-based log pattern matching in `src/detection/system_issue_detector.py` | Agent-B | 1.4 | ⏳ Pending | Patterns: api_timeout, rate_limit, OOM, auth_error, model_not_found |
+| **2.3** | Implement `DataIssueDetector` with `detect_covariate_drift` (KS + `chi2_contingency`) and `detect_schema_drift` in `src/detection/data_issue_detector.py` | Agent-B | 2.2 | ✅ Completed | [2026-06-13 21:35] [Agent-B] [HANDOFF] DataIssueDetector implemented in src/detection/data_issue_detector.py. Supports KS covariate numerical drift, Chi2 contingency categorical drift, and schema mismatch checks. Branch: feature/agent-b-phase2. → READY FOR Agent-D, Agent-E |
+| **2.4** | Implement `ModelPerformanceDetector` with sliding window accuracy/F1/AUC monitoring in `src/detection/model_performance_detector.py` | Agent-B | 1.3 | ✅ Completed | [2026-06-13 21:35] [Agent-B] [HANDOFF] ModelPerformanceDetector implemented in src/detection/model_performance_detector.py. Checks sliding window performance drop threshold against historical baselines. Branch: feature/agent-b-phase2. → READY FOR Agent-D, Agent-E |
+| **2.5** | Implement module-level `RelevanceScorer` singleton (SentenceTransformer loaded once) in `src/detection/relevance_scorer.py` | Agent-B | 1.3 | ✅ Completed | [2026-06-13 21:35] [Agent-B] [HANDOFF] RelevanceScorer implemented in src/detection/relevance_scorer.py. Loads SentenceTransformer (bge-small-en-v1.5) as a singleton at module level. Branch: feature/agent-b-phase2. → READY FOR Agent-D, Agent-E |
+| **2.6** | Implement unified `AnomalyDetector` facade combining 2.1–2.5, outputting `AnomalyEvent` schema | Agent-B | 2.1, 2.2, 2.3, 2.4, 2.5 | ✅ Completed | [2026-06-13 21:35] [Agent-B] [HANDOFF] Unified AnomalyDetector facade implemented in src/detection/anomaly_detector.py. Integrates all detectors and outputs AnomalyEvent schema. Branch: feature/agent-b-phase2. → READY FOR Agent-D, Agent-E |
+| **2.7** | Implement `SystemIssueDetector` with regex-based log pattern matching in `src/detection/system_issue_detector.py` | Agent-B | 1.4 | ✅ Completed | [2026-06-13 21:35] [Agent-B] [HANDOFF] SystemIssueDetector implemented in src/detection/system_issue_detector.py. Matches log lines against timeout, rate limit, OOM, auth, model missing regex patterns. Branch: feature/agent-b-phase2. → READY FOR Agent-D, Agent-E |
 | **2.8** | Write unit tests for all detectors in `tests/test_detection.py` | Agent-E | 2.1–2.7 | ⏳ Pending | Cover: no drift, drift detected, edge cases (empty arrays, single element) |
 
 ---
@@ -127,10 +127,10 @@ Message here.
 |---|---|---|---|---|---|
 | **3.1** | Populate knowledge base documents: min 5 guides covering LLM issues, model issues, data drift, system issues, prompt engineering under `data/knowledge_base/` | Agent-C | 1.1 | ✅ Completed | Use Markdown format; min 400 words per guide<br>[2026-06-13 20:55] [Agent-C] [STATUS_CHANGE] Task started.<br>[2026-06-13 21:00] [Agent-C] [STATUS_CHANGE] Completed. All 5 RAG markdown guides created. data/knowledge_base/ → READY FOR Agent-C (Task 3.3) |
 | **3.2** | Populate 5+ past incident JSON records under `data/knowledge_base/past_incidents/` | Agent-C | 1.1 | ✅ Completed | Schema: incident_id, failure_type, root_cause, fix_applied, outcome, tags<br>[2026-06-13 20:55] [Agent-C] [STATUS_CHANGE] Task started.<br>[2026-06-13 21:00] [Agent-C] [STATUS_CHANGE] Completed. All 5 past incident records created. data/knowledge_base/past_incidents/ → READY FOR Agent-C (Task 3.3) |
-| **3.3** | Implement `KnowledgeBaseIngester` using LangChain `Chroma` wrapper with injected `embedding_function` in `src/rag/ingestion.py` | Agent-C | 3.1, 3.2 | ⏳ Pending | Must accept same `embedding_function` as `AegisRAG` — model consistency rule |
-| **3.4** | Implement `AegisRAG` retriever with MMR search and category filtering in `src/rag/retrieval.py` | Agent-C | 3.3 | ⏳ Pending | `search_type="mmr"`, k=5, fetch_k=20 |
+| **3.3** | Implement `KnowledgeBaseIngester` using LangChain `Chroma` wrapper with injected `embedding_function` in `src/rag/ingestion.py` | Agent-C | 3.1, 3.2 | 🔄 In Progress | Must accept same `embedding_function` as `AegisRAG` — model consistency rule<br>[2026-06-13 21:30] [Agent-C] [STATUS_CHANGE] Task started. |
+| **3.4** | Implement `AegisRAG` retriever with MMR search and category filtering in `src/rag/retrieval.py` | Agent-C | 3.3 | 🔄 In Progress | `search_type="mmr"`, k=5, fetch_k=20<br>[2026-06-13 21:30] [Agent-C] [STATUS_CHANGE] Task started. |
 | **3.5** | Implement `RAGEvaluator` using corrected RAGAS setup (list[list[str]] contexts, non-OpenAI LLM config) in `src/rag/evaluator.py` | Agent-C | 3.4 | ⏳ Pending | Targets: faithfulness ≥0.85, answer_relevancy ≥0.80 |
-| **3.6** | Implement `rebuild_knowledge_base.py` script to re-ingest all docs into ChromaDB | Agent-C | 3.3 | ⏳ Pending | Supports `--reset` flag to wipe and re-index |
+| **3.6** | Implement `rebuild_knowledge_base.py` script to re-ingest all docs into ChromaDB | Agent-C | 3.3 | 🔄 In Progress | Supports `--reset` flag to wipe and re-index<br>[2026-06-13 21:30] [Agent-C] [STATUS_CHANGE] Task started. |
 | **3.7** | Write unit tests for RAG retrieval quality in `tests/test_rag.py` | Agent-E | 3.4, 3.5 | ⏳ Pending | Golden test queries for each failure category; assert top-3 docs |
 | **3.8** | Run manual RAG quality spot-check: all 5 golden test queries must return expected docs in top-3 | Agent-C, Agent-E | 3.7 | ⏳ Pending | Document retrieval scores in test notes |
 
@@ -186,12 +186,12 @@ Message here.
 | Phase | Total Tasks | Completed ✅ | In Progress 🔄 | Blocked 🛑 | Pending ⏳ |
 |---|---|---|---|---|---|
 | Phase 1 — Foundation | 8 | 8 | 0 | 0 | 0 |
-| Phase 2 — Detection | 8 | 2 | 0 | 0 | 6 |
-| Phase 3 — RAG | 8 | 2 | 0 | 0 | 6 |
+| Phase 2 — Detection | 8 | 7 | 0 | 0 | 1 |
+| Phase 3 — RAG | 8 | 2 | 3 | 0 | 3 |
 | Phase 4 — Agent | 7 | 2 | 0 | 0 | 5 |
 | Phase 5 — Healing | 7 | 0 | 0 | 0 | 7 |
 | Phase 6 — UI/API | 10 | 0 | 0 | 0 | 10 |
-| **TOTAL** | **48** | **14** | **0** | **0** | **34** |
+| **TOTAL** | **48** | **19** | **3** | **0** | **26** |
 
 ---
 

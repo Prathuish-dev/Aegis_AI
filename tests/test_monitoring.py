@@ -168,5 +168,87 @@ class TestMonitoringSystem(unittest.TestCase):
         self.assertEqual(stats["count"], 2)
         self.assertAlmostEqual(stats["mean"], 0.035)
 
+    def test_log_collector_schema_validation(self):
+        # Verify that LogCollector.ingest_log raises KeyError if required keys are missing
+        required_keys = ["event_id", "system_id", "metric_type", "timestamp"]
+        valid_log = {
+            "event_id": "evt_val_001",
+            "system_id": "sys_val",
+            "metric_type": "accuracy",
+            "value": 0.95,
+            "timestamp": datetime.utcnow().isoformat()
+        }
+        for key in required_keys:
+            invalid_log = dict(valid_log)
+            del invalid_log[key]
+            with self.assertRaises(KeyError):
+                self.log_collector.ingest_log(invalid_log)
+
+    def test_metric_tracker_all_metric_types(self):
+        system_id = "sys_all_metrics"
+        base_time = datetime.utcnow()
+        # Ingest/record each metric type
+        for idx, m_type in enumerate(MetricType):
+            events = self.metric_tracker.record_metric(
+                system_id=system_id,
+                metric_type=m_type,
+                value=0.5 + idx * 0.1,
+                timestamp=base_time,
+                trigger_alerts=False
+            )
+            self.assertEqual(len(events), 0)
+            history_key = (system_id, m_type)
+            self.assertIn(history_key, self.metric_tracker.history)
+            self.assertEqual(len(self.metric_tracker.history[history_key]), 1)
+            self.assertEqual(self.metric_tracker.history[history_key][0][1], 0.5 + idx * 0.1)
+
+    def test_metric_tracker_edge_cases(self):
+        system_id = "sys_edge"
+        # Test empty sliding window calculations
+        self.assertEqual(self.metric_tracker.calculate_sliding_average(system_id, MetricType.ACCURACY), 0.0)
+        self.assertEqual(self.metric_tracker.calculate_p95(system_id, MetricType.LATENCY), 0.0)
+        
+        # Test single value sliding window calculations
+        base_time = datetime.utcnow()
+        self.metric_tracker.record_metric(system_id, MetricType.ACCURACY, 0.99, base_time, trigger_alerts=False)
+        self.assertAlmostEqual(self.metric_tracker.calculate_sliding_average(system_id, MetricType.ACCURACY), 0.99)
+        self.assertAlmostEqual(self.metric_tracker.calculate_p95(system_id, MetricType.ACCURACY), 0.99)
+
+    def test_poll_from_db_invalid_metric_type(self):
+        # Ingest log entry with invalid metric type (should be skipped by poll_from_db)
+        self.log_collector.ingest_log({
+            "event_id": "e_invalid",
+            "system_id": "sys_invalid_type",
+            "metric_type": "invalid_metric_name",
+            "value": 100.0,
+            "timestamp": datetime.utcnow().isoformat()
+        })
+        
+        # Poll DB
+        self.metric_tracker.poll_from_db(system_id="sys_invalid_type")
+        
+        # Verify no history was populated for this invalid type
+        for key in self.metric_tracker.history:
+            self.assertNotEqual(key[0], "sys_invalid_type")
+
+    def test_anomaly_event_model_creation(self):
+        # Test AnomalyEvent and FailureCategory schemas from models.py
+        event = AnomalyEvent(
+            event_id="evt_schema_test",
+            system_id="sys_schema",
+            metric_type=MetricType.LLM_RELEVANCE,
+            current_value=0.4,
+            baseline_value=0.7,
+            timestamp=datetime.utcnow(),
+            raw_context={
+                "failure_category": FailureCategory.PROMPT_ISSUE.value,
+                "message": "Low relevance score detected"
+            },
+            severity="medium"
+        )
+        self.assertEqual(event.event_id, "evt_schema_test")
+        self.assertEqual(event.metric_type, MetricType.LLM_RELEVANCE)
+        self.assertEqual(event.raw_context["failure_category"], FailureCategory.PROMPT_ISSUE.value)
+
 if __name__ == '__main__':
     unittest.main()

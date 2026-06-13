@@ -110,8 +110,8 @@ Message here.
 
 | Task ID | Task Description | Assigned Agent(s) | Dependencies | Status | Notes / Hand-off |
 |---|---|---|---|---|---|
-| **2.1** | Implement `DetectionRule` dataclass and `RuleEngine` with `_check()` for `lt`, `gt`, `delta_pct` operators in `src/detection/rule_engine.py` | Agent-B | 1.3 | ⏳ Pending | Rules configurable from `settings.yaml` |
-| **2.2** | Implement `DriftDetector` with KS test (`detect_feature_drift`) and corrected PSI (`compute_psi`) in `src/detection/drift_detector.py` | Agent-B | 1.3 | ⏳ Pending | Use shared `bin_edges` for PSI; proportions not density |
+| **2.1** | Implement `DetectionRule` dataclass and `RuleEngine` with `_check()` for `lt`, `gt`, `delta_pct` operators in `src/detection/rule_engine.py` | Agent-B | 1.3 | ✅ Completed | [2026-06-13 21:15] [Agent-B] [HANDOFF] DetectionRule and RuleEngine implemented in src/detection/rule_engine.py. Supports lt, gt, delta_pct operators and yaml config loading. Branch: feature/agent-b-phase1. → READY FOR Agent-D, Agent-E |
+| **2.2** | Implement `DriftDetector` with KS test (`detect_feature_drift`) and corrected PSI (`compute_psi`) in `src/detection/drift_detector.py` | Agent-B | 1.3 | ✅ Completed | [2026-06-13 21:15] [Agent-B] [HANDOFF] DriftDetector implemented in src/detection/drift_detector.py. Supports detect_feature_drift (KS test) and compute_psi (shared bin edges). Branch: feature/agent-b-phase1. → READY FOR Agent-D, Agent-E |
 | **2.3** | Implement `DataIssueDetector` with `detect_covariate_drift` (KS + `chi2_contingency`) and `detect_schema_drift` in `src/detection/data_issue_detector.py` | Agent-B | 2.2 | ⏳ Pending | `chi2_contingency` on `pd.crosstab` — see doc/06 |
 | **2.4** | Implement `ModelPerformanceDetector` with sliding window accuracy/F1/AUC monitoring in `src/detection/model_performance_detector.py` | Agent-B | 1.3 | ⏳ Pending | Configurable window_hours and drop_threshold |
 | **2.5** | Implement module-level `RelevanceScorer` singleton (SentenceTransformer loaded once) in `src/detection/relevance_scorer.py` | Agent-B | 1.3 | ⏳ Pending | Model: `BAAI/bge-small-en-v1.5`; never instantiate inside function |
@@ -185,13 +185,13 @@ Message here.
 
 | Phase | Total Tasks | Completed ✅ | In Progress 🔄 | Blocked 🛑 | Pending ⏳ |
 |---|---|---|---|---|---|
-| Phase 1 — Foundation | 8 | 6 | 0 | 0 | 2 |
-| Phase 2 — Detection | 8 | 0 | 0 | 0 | 8 |
+| Phase 1 — Foundation | 8 | 4 | 2 | 0 | 2 |
+| Phase 2 — Detection | 8 | 2 | 0 | 0 | 6 |
 | Phase 3 — RAG | 8 | 2 | 0 | 0 | 6 |
 | Phase 4 — Agent | 7 | 0 | 0 | 0 | 7 |
 | Phase 5 — Healing | 7 | 0 | 0 | 0 | 7 |
 | Phase 6 — UI/API | 10 | 0 | 0 | 0 | 10 |
-| **TOTAL** | **48** | **8** | 0 | **0** | **40** |
+| **TOTAL** | **48** | **8** | 2 | **0** | **38** |
 
 ---
 

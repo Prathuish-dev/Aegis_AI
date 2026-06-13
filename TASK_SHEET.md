@@ -99,9 +99,9 @@ Message here.
 | **1.2** | Set up Python 3.11 virtual environment, `requirements.txt`, `.env.example` | Agent-A | 1.1 | ✅ Completed | All deps documented in `doc/03_tech_stack_research.md` |
 | **1.3** | Define all Pydantic data models: `AnomalyEvent`, `MetricType`, `FailureCategory` in `src/monitoring/models.py` | Agent-A | 1.2 | ✅ Completed | **SCHEMA FROZEN** after this. → READY FOR Agent-B, Agent-C, Agent-D |
 | **1.4** | Implement `LogCollector` class with SQLite persistence and `_init_db()` in `src/monitoring/log_collector.py` | Agent-A | 1.3 | ✅ Completed | `_init_db()` creates events table; env-driven db_path via `LOG_DB_PATH` |
-| **1.5** | Implement `MetricTracker` class for polling numerical metrics in `src/monitoring/metric_tracker.py` | Agent-A | 1.3 | ⏳ Pending | Tracks accuracy, latency, error_rate with sliding window |
+| **1.5** | Implement `MetricTracker` class for polling numerical metrics in `src/monitoring/metric_tracker.py` | Agent-A | 1.3 | 🔄 In Progress | Tracks accuracy, latency, error_rate with sliding window<br>[2026-06-13 21:03] [Agent-A] [STATUS_CHANGE] Task started. |
 | **1.6** | Write sample log generator script `scripts/generate_sample_logs.py` for dev/testing | Agent-E | 1.4 | ⏳ Pending | Generates 5 failure scenario logs for each category |
-| **1.7** | Set up `config/settings.yaml` with all detection thresholds and system settings | Agent-A | 1.2 | ⏳ Pending | Thresholds: accuracy drop ≥5%, latency P95 ≥2000ms, error rate ≥2% |
+| **1.7** | Set up `config/settings.yaml` with all detection thresholds and system settings | Agent-A | 1.2 | 🔄 In Progress | Thresholds: accuracy drop ≥5%, latency P95 ≥2000ms, error rate ≥2%<br>[2026-06-13 21:03] [Agent-A] [STATUS_CHANGE] Task started. |
 | **1.8** | Write unit tests for `LogCollector` and `MetricTracker` in `tests/test_monitoring.py` | Agent-E | 1.4, 1.5 | ⏳ Pending | Test: ingest, retrieve, schema validation |
 
 ---
@@ -125,8 +125,8 @@ Message here.
 
 | Task ID | Task Description | Assigned Agent(s) | Dependencies | Status | Notes / Hand-off |
 |---|---|---|---|---|---|
-| **3.1** | Populate knowledge base documents: min 5 guides covering LLM issues, model issues, data drift, system issues, prompt engineering under `data/knowledge_base/` | Agent-C | 1.1 | ⏳ Pending | Use Markdown format; min 400 words per guide |
-| **3.2** | Populate 5+ past incident JSON records under `data/knowledge_base/past_incidents/` | Agent-C | 1.1 | ⏳ Pending | Schema: incident_id, failure_type, root_cause, fix_applied, outcome, tags |
+| **3.1** | Populate knowledge base documents: min 5 guides covering LLM issues, model issues, data drift, system issues, prompt engineering under `data/knowledge_base/` | Agent-C | 1.1 | ✅ Completed | Use Markdown format; min 400 words per guide<br>[2026-06-13 20:55] [Agent-C] [STATUS_CHANGE] Task started.<br>[2026-06-13 21:00] [Agent-C] [STATUS_CHANGE] Completed. All 5 RAG markdown guides created. data/knowledge_base/ → READY FOR Agent-C (Task 3.3) |
+| **3.2** | Populate 5+ past incident JSON records under `data/knowledge_base/past_incidents/` | Agent-C | 1.1 | ✅ Completed | Schema: incident_id, failure_type, root_cause, fix_applied, outcome, tags<br>[2026-06-13 20:55] [Agent-C] [STATUS_CHANGE] Task started.<br>[2026-06-13 21:00] [Agent-C] [STATUS_CHANGE] Completed. All 5 past incident records created. data/knowledge_base/past_incidents/ → READY FOR Agent-C (Task 3.3) |
 | **3.3** | Implement `KnowledgeBaseIngester` using LangChain `Chroma` wrapper with injected `embedding_function` in `src/rag/ingestion.py` | Agent-C | 3.1, 3.2 | ⏳ Pending | Must accept same `embedding_function` as `AegisRAG` — model consistency rule |
 | **3.4** | Implement `AegisRAG` retriever with MMR search and category filtering in `src/rag/retrieval.py` | Agent-C | 3.3 | ⏳ Pending | `search_type="mmr"`, k=5, fetch_k=20 |
 | **3.5** | Implement `RAGEvaluator` using corrected RAGAS setup (list[list[str]] contexts, non-OpenAI LLM config) in `src/rag/evaluator.py` | Agent-C | 3.4 | ⏳ Pending | Targets: faithfulness ≥0.85, answer_relevancy ≥0.80 |
@@ -185,13 +185,13 @@ Message here.
 
 | Phase | Total Tasks | Completed ✅ | In Progress 🔄 | Blocked 🛑 | Pending ⏳ |
 |---|---|---|---|---|---|
-| Phase 1 — Foundation | 8 | 4 | 0 | 0 | 4 |
+| Phase 1 — Foundation | 8 | 4 | 2 | 0 | 2 |
 | Phase 2 — Detection | 8 | 0 | 0 | 0 | 8 |
-| Phase 3 — RAG | 8 | 0 | 0 | 0 | 8 |
+| Phase 3 — RAG | 8 | 2 | 0 | 0 | 6 |
 | Phase 4 — Agent | 7 | 0 | 0 | 0 | 7 |
 | Phase 5 — Healing | 7 | 0 | 0 | 0 | 7 |
 | Phase 6 — UI/API | 10 | 0 | 0 | 0 | 10 |
-| **TOTAL** | **48** | **4** | **0** | **0** | **44** |
+| **TOTAL** | **48** | **6** | 2 | **0** | **40** |
 
 ---
 

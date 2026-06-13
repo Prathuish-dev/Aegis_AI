@@ -1,0 +1,8 @@
+{
+  "incident_id": "INC-2026-003",
+  "failure_type": "data_issue",
+  "root_cause": "A new marketing campaign directed at younger demographics led to a massive shift in user age and transaction patterns. The Kolmogorov-Smirnov test on `average_purchase_value` feature failed (p-value < 0.001) and the Population Stability Index (PSI) rose to 0.31, causing the forecasting model to under-predict transaction volumes.",
+  "fix_applied": "Triggered the automated retraining pipeline using data from the past 7 days to adapt the model weights to the new baseline. Applied Quantile Normalization to the `average_purchase_value` feature to bound future shifts.",
+  "outcome": "Resolved. PSI dropped back to 0.04 (well below the 0.1 threshold), and the model's F1-score returned to 0.81 from a low of 0.62.",
+  "tags": ["data_drift", "covariate_shift", "ks_test", "psi", "quantile_scaling"]
+}

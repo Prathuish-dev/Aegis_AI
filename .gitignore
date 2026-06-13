@@ -1,0 +1,7 @@
+__pycache__/
+*.py[cod]
+*$py.class
+.env
+data/logs/*.db
+chroma_db/
+.pytest_cache/

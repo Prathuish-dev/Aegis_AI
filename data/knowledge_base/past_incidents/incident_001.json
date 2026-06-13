@@ -1,0 +1,8 @@
+{
+  "incident_id": "INC-2026-001",
+  "failure_type": "prompt_issue",
+  "root_cause": "The prompt template used for the customer support bot lacked strict grounding instructions, and the model temperature was set to a high value of 0.8. Consequently, the model began fabricating discount codes and hallucinating competitor recommendations when asked ambiguous questions by users.",
+  "fix_applied": "Updated the prompt template in `src/agent/prompts.py` to enforce strict grounding boundaries ('Answer ONLY based on the provided context...'). Adjusted the service configuration in `config/settings.yaml` to reduce the temperature parameter to 0.1 for customer-facing models.",
+  "outcome": "Resolved. The RAGAS faithfulness score for response outputs recovered to an average of 0.94, and zero ungrounded claims have been flagged by the automated judge model in subsequent evaluation runs.",
+  "tags": ["llm_hallucination", "temperature_tuning", "prompt_boundaries", "customer_support"]
+}

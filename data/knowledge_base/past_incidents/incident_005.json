@@ -1,0 +1,8 @@
+{
+  "incident_id": "INC-2026-005",
+  "failure_type": "system_issue",
+  "root_cause": "A sudden burst of log alerts caused concurrent threads to make simultaneous API calls to the upstream LLM provider. This led to connection timeouts (HTTP 504) followed by Rate Limiting errors (HTTP 429 Too Many Requests) as the client exceeded its Token Per Minute (TPM) quota.",
+  "fix_applied": "Implemented client-side rate limiting using a token bucket library. Wrapped all LLM API invocations with exponential backoff and random jitter retries using the `tenacity` library, and added a secondary backup API provider configuration.",
+  "outcome": "Resolved. Outgoing request density was smoothed, and rate limit errors were eliminated. The average request latency during peak load settled within acceptable limits.",
+  "tags": ["api_timeout", "rate_limit_429", "exponential_backoff", "fallback_provider"]
+}

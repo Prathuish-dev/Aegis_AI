@@ -136,7 +136,7 @@ It demonstrates:
 
 ## 🧑‍💻 Author
 
-**[Your Name]**
+**PRATHUISH SANJEEVAN**
 AI Engineer | Machine Learning | LLM Systems
 
 ---

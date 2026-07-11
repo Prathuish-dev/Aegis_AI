@@ -117,7 +117,7 @@ Message here.
 | **2.5** | Implement module-level `RelevanceScorer` singleton (SentenceTransformer loaded once) in `src/detection/relevance_scorer.py` | Agent-B | 1.3 | ✅ Completed | [2026-07-11 20:05] [Agent-B] [HANDOFF] RelevanceScorer class implemented in src/detection/relevance_scorer.py. Loads model BAAI/bge-small-en-v1.5 once as singleton. Exposes score() and is_hallucinating(). Branch: feature/agent-b-phase2. → READY FOR Agent-D, Agent-E |
 | **2.6** | Implement unified `AnomalyDetector` facade combining 2.1–2.5, outputting `AnomalyEvent` schema | Agent-B | 2.1, 2.2, 2.3, 2.4, 2.5 | ✅ Completed | [2026-07-11 20:05] [Agent-B] [HANDOFF] AnomalyDetector facade implemented in src/detection/anomaly_detector.py. Integrates all detectors and maps outputs to AnomalyEvent Pydantic schemas. Branch: feature/agent-b-phase2. → READY FOR Agent-D, Agent-E |
 | **2.7** | Implement `SystemIssueDetector` with regex-based log pattern matching in `src/detection/system_issue_detector.py` | Agent-B | 1.4 | ✅ Completed | [2026-07-11 20:05] [Agent-B] [HANDOFF] SystemIssueDetector implemented in src/detection/system_issue_detector.py. Exposes detect_from_log(). Branch: feature/agent-b-phase2. → READY FOR Agent-D, Agent-E |
-| **2.8** | Write unit tests for all detectors in `tests/test_detection.py` | Agent-E | 2.1–2.7 | ⏳ Pending | Cover: no drift, drift detected, edge cases (empty arrays, single element) |
+| **2.8** | Write unit tests for all detectors in `tests/test_detection.py` | Agent-E | 2.1–2.7 | ✅ Completed | [2026-07-11 20:20] [Agent-E] [HANDOFF] Unit tests for all 6 detectors and the AnomalyDetector facade implemented in tests/test_detection.py. Verified 34 passing tests. Branch: feature/agent-e-phase2. → READY FOR All Agents |
 
 ---
 
@@ -186,12 +186,12 @@ Message here.
 | Phase | Total Tasks | Completed ✅ | In Progress 🔄 | Blocked 🛑 | Pending ⏳ |
 |---|---|---|---|---|---|
 | Phase 1 — Foundation | 8 | 8 | 0 | 0 | 0 |
-| Phase 2 — Detection | 8 | 7 | 0 | 0 | 1 |
+| Phase 2 — Detection | 8 | 8 | 0 | 0 | 0 |
 | Phase 3 — RAG | 8 | 2 | 3 | 0 | 3 |
 | Phase 4 — Agent | 7 | 2 | 0 | 0 | 5 |
 | Phase 5 — Healing | 7 | 0 | 0 | 0 | 7 |
 | Phase 6 — UI/API | 10 | 0 | 0 | 0 | 10 |
-| **TOTAL** | **48** | **19** | 3 | **0** | **26** |
+| **TOTAL** | **48** | **20** | 3 | **0** | **25** |
 
 ---
 

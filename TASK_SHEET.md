@@ -117,7 +117,7 @@ Message here.
 | **2.5** | Implement module-level `RelevanceScorer` singleton (SentenceTransformer loaded once) in `src/detection/relevance_scorer.py` | Agent-B | 1.3 | ✅ Completed | [2026-07-11 20:05] [Agent-B] [HANDOFF] RelevanceScorer class implemented in src/detection/relevance_scorer.py. Loads model BAAI/bge-small-en-v1.5 once as singleton. Exposes score() and is_hallucinating(). Branch: feature/agent-b-phase2. → READY FOR Agent-D, Agent-E |
 | **2.6** | Implement unified `AnomalyDetector` facade combining 2.1–2.5, outputting `AnomalyEvent` schema | Agent-B | 2.1, 2.2, 2.3, 2.4, 2.5 | ✅ Completed | [2026-07-11 20:05] [Agent-B] [HANDOFF] AnomalyDetector facade implemented in src/detection/anomaly_detector.py. Integrates all detectors and maps outputs to AnomalyEvent Pydantic schemas. Branch: feature/agent-b-phase2. → READY FOR Agent-D, Agent-E |
 | **2.7** | Implement `SystemIssueDetector` with regex-based log pattern matching in `src/detection/system_issue_detector.py` | Agent-B | 1.4 | ✅ Completed | [2026-07-11 20:05] [Agent-B] [HANDOFF] SystemIssueDetector implemented in src/detection/system_issue_detector.py. Exposes detect_from_log(). Branch: feature/agent-b-phase2. → READY FOR Agent-D, Agent-E |
-| **2.8** | Write unit tests for all detectors in `tests/test_detection.py` | Agent-E | 2.1–2.7 | ⏳ Pending | Cover: no drift, drift detected, edge cases (empty arrays, single element) |
+| **2.8** | Write unit tests for all detectors in `tests/test_detection.py` | Agent-E | 2.1–2.7 | 🔄 In Progress | [2026-07-11 20:06] [Agent-E] [STATUS_CHANGE] Task started. |
 
 ---
 
@@ -141,7 +141,7 @@ Message here.
 | Task ID | Task Description | Assigned Agent(s) | Dependencies | Status | Notes / Hand-off |
 |---|---|---|---|---|---|
 | **4.1** | Define `AegisAgentState` TypedDict in `src/agent/state.py` | Agent-D | 1.3 | ✅ Completed | Fields: anomaly_description, retrieved_context, root_cause, fix_recommendation, confidence_score, requires_human_review, iteration_count<br>[2026-06-13 21:16] [Agent-D] [STATUS_CHANGE] Task started.<br>[2026-06-13 21:20] [Agent-D] [HANDOFF] AegisAgentState TypedDict defined in src/agent/state.py. Branch: feature/agent-d-phase1. → READY FOR Agent-D (Task 4.2), Agent-E |
-| **4.2** | Implement all agent node functions (`retrieve_context_node`, `analyze_anomaly_node`, `classify_failure_node`, `generate_fix_node`, `human_review_node`, `apply_fix_node`) in `src/agent/nodes.py` | Agent-D | 4.1, 3.4 | ⏳ Pending | Each node must update state and log via structured logger |
+| **4.2** | Implement all agent node functions (`retrieve_context_node`, `analyze_anomaly_node`, `classify_failure_node`, `generate_fix_node`, `human_review_node`, `apply_fix_node`) in `src/agent/nodes.py` | Agent-D | 4.1, 3.4 | In Progress 🔄 | Each node must update state and log via structured logger<br>[2026-07-11 20:05] [Agent-D] [STATUS_CHANGE] Task started. |
 | **4.3** | Implement `route_after_fix()` conditional router (returns `"human_review"` if confidence < 80, else `"apply_fix"`) | Agent-D | 4.2 | ⏳ Pending | Threshold configurable in `settings.yaml` |
 | **4.4** | Build LangGraph state machine using corrected topology: all nodes declared, `human_review → apply_fix → END`, `interrupt_before=["human_review"]` in `src/agent/graph.py` | Agent-D | 4.2, 4.3 | ⏳ Pending | Use `MemorySaver` checkpointer; `interrupt_before` on `compile()` only |
 | **4.5** | Define Chain-of-Thought prompt templates in `src/agent/prompts.py` | Agent-D | 4.1 | ✅ Completed | Structured JSON output: root_cause, failure_category, fix_recommendation, confidence_score, knowledge_references<br>[2026-06-13 21:16] [Agent-D] [STATUS_CHANGE] Task started.<br>[2026-06-13 21:20] [Agent-D] [HANDOFF] Prompt templates with escaped schema curly braces defined in src/agent/prompts.py. Branch: feature/agent-d-phase1. → READY FOR Agent-D (Task 4.2), Agent-E |
@@ -155,11 +155,11 @@ Message here.
 | Task ID | Task Description | Assigned Agent(s) | Dependencies | Status | Notes / Hand-off |
 |---|---|---|---|---|---|
 | **5.1** | Implement `FixExecutor` with three modes (`suggest`, `semi-auto`, `auto`) in `src/healing/fix_executor.py` | Agent-D | 4.4 | ⏳ Pending | Mode driven by `FIX_MODE` env variable |
-| **5.2** | Implement `PromptOptimizer` that rewrites failing prompts using LLM in `src/healing/prompt_optimizer.py` | Agent-D | 4.5 | ⏳ Pending | Maps issue_type → rewrite strategy |
+| **5.2** | Implement `PromptOptimizer` that rewrites failing prompts using LLM in `src/healing/prompt_optimizer.py` | Agent-D | 4.5 | In Progress 🔄 | Maps issue_type → rewrite strategy<br>[2026-07-11 20:05] [Agent-D] [STATUS_CHANGE] Task started. |
 | **5.3** | Implement `LLMQualityDetector` with `_llm_faithfulness_check()` (LLM-as-Judge replacing embedding similarity) in `src/healing/llm_quality_detector.py` | Agent-B | 2.5 | ⏳ Pending | JSON output: `{"faithful": bool, "reason": str}` with parse-error fallback |
 | **5.4** | Implement `RetrievalQualityDetector` with pairwise document embedding comparison for duplicate detection in `src/detection/retrieval_quality_detector.py` | Agent-B | 2.5 | ⏳ Pending | Compare doc embeddings against each other, not against query scores |
 | **5.5** | Implement post-fix verifier that re-triggers monitoring on healed system to confirm recovery in `src/healing/verifier.py` | Agent-D | 5.1, 2.6 | ⏳ Pending | Polls metric for 10 min post-fix; logs `healed` or `unresolved` |
-| **5.6** | Implement structured audit logger: record every autonomous action with timestamp, agent, action, outcome in `src/healing/audit_logger.py` | Agent-A | 1.4 | ⏳ Pending | Append to SQLite `audit_log` table |
+| **5.6** | Implement structured audit logger: record every autonomous action with timestamp, agent, action, outcome in `src/healing/audit_logger.py` | Agent-A | 1.4 | ✅ Completed | Append to SQLite `audit_log` table<br>[2026-07-11 20:06] [Agent-A] [STATUS_CHANGE] Task started.<br>[2026-07-11 20:10] [Agent-A] [HANDOFF] AuditLogger class implemented. Exposes log_action() and get_audit_history(). File: src/healing/audit_logger.py. Branch: feature/agent-a-phase5. → READY FOR Agent-D, Agent-E |
 | **5.7** | Write integration tests: simulate accuracy drop → auto-fix suggestion → verify audit log entry | Agent-E | 5.1–5.6 | ⏳ Pending | Assert fix suggestion contains required fields |
 
 ---
@@ -186,12 +186,12 @@ Message here.
 | Phase | Total Tasks | Completed ✅ | In Progress 🔄 | Blocked 🛑 | Pending ⏳ |
 |---|---|---|---|---|---|
 | Phase 1 — Foundation | 8 | 8 | 0 | 0 | 0 |
-| Phase 2 — Detection | 8 | 7 | 0 | 0 | 1 |
+| Phase 2 — Detection | 8 | 7 | 1 | 0 | 0 |
 | Phase 3 — RAG | 8 | 2 | 3 | 0 | 3 |
-| Phase 4 — Agent | 7 | 2 | 0 | 0 | 5 |
-| Phase 5 — Healing | 7 | 0 | 0 | 0 | 7 |
+| Phase 4 — Agent | 7 | 2 | 1 | 0 | 4 |
+| Phase 5 — Healing | 7 | 1 | 1 | 0 | 5 |
 | Phase 6 — UI/API | 10 | 0 | 0 | 0 | 10 |
-| **TOTAL** | **48** | **19** | 3 | **0** | **26** |
+| **TOTAL** | **48** | **20** | 6 | **0** | **22** |
 
 ---
 

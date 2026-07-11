@@ -1,0 +1,71 @@
+# ============================================================
+# Aegis AI — Docker Compose Configuration
+# Services: aegis-api (FastAPI), aegis-ui (Streamlit)
+# Volumes:  chroma_data (ChromaDB), sqlite_data (SQLite DB)
+# ============================================================
+
+version: "3.9"
+
+services:
+
+  # ----------------------------------------------------------
+  # FastAPI self-healing backend
+  # ----------------------------------------------------------
+  aegis-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: aegis-api
+    image: aegis-ai/api:latest
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    environment:
+      - PYTHONPATH=/app
+      - FIX_MODE=${FIX_MODE:-suggest}
+      - LOG_DB_PATH=${LOG_DB_PATH:-data/logs/events.db}
+      - CHROMA_PERSIST_DIR=${CHROMA_PERSIST_DIR:-data/chroma_db}
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+    volumes:
+      # Persist ChromaDB vector store
+      - chroma_data:/app/data/chroma_db
+      # Persist SQLite event + audit + incidents database
+      - sqlite_data:/app/data/logs
+    healthcheck:
+      test: ["CMD", "python", "-c",
+             "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+    restart: unless-stopped
+
+  # ----------------------------------------------------------
+  # Streamlit monitoring dashboard
+  # ----------------------------------------------------------
+  aegis-ui:
+    build:
+      context: .
+      dockerfile: Dockerfile.streamlit
+    container_name: aegis-ui
+    image: aegis-ai/ui:latest
+    ports:
+      - "8501:8501"
+    env_file:
+      - .env
+    environment:
+      - API_BASE_URL=http://aegis-api:8000
+    depends_on:
+      aegis-api:
+        condition: service_healthy
+    restart: unless-stopped
+
+# ----------------------------------------------------------
+# Named volumes
+# ----------------------------------------------------------
+volumes:
+  chroma_data:
+    name: aegis_chroma_data
+  sqlite_data:
+    name: aegis_sqlite_data

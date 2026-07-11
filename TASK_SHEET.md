@@ -142,11 +142,11 @@ Message here.
 |---|---|---|---|---|---|
 | **4.1** | Define `AegisAgentState` TypedDict in `src/agent/state.py` | Agent-D | 1.3 | ✅ Completed | Fields: anomaly_description, retrieved_context, root_cause, fix_recommendation, confidence_score, requires_human_review, iteration_count<br>[2026-06-13 21:16] [Agent-D] [STATUS_CHANGE] Task started.<br>[2026-06-13 21:20] [Agent-D] [HANDOFF] AegisAgentState TypedDict defined in src/agent/state.py. Branch: feature/agent-d-phase1. → READY FOR Agent-D (Task 4.2), Agent-E |
 | **4.2** | Implement all agent node functions (`retrieve_context_node`, `analyze_anomaly_node`, `classify_failure_node`, `generate_fix_node`, `human_review_node`, `apply_fix_node`) in `src/agent/nodes.py` | Agent-D | 4.1, 3.4 | ✅ Completed | [2026-07-11 20:40] [Agent-D] [HANDOFF] All 6 agent node functions implemented in src/agent/nodes.py. Exposes nodes for retrieve_context, analyze_anomaly, classify_failure, generate_fix, human_review, and apply_fix. Verified with unit tests. Branch: feature/agent-e-phase2. |
-| **4.3** | Implement `route_after_fix()` conditional router (returns `"human_review"` if confidence < 80, else `"apply_fix"`) | Agent-D | 4.2 | ⏳ Pending | Threshold configurable in `settings.yaml` |
-| **4.4** | Build LangGraph state machine using corrected topology: all nodes declared, `human_review → apply_fix → END`, `interrupt_before=["human_review"]` in `src/agent/graph.py` | Agent-D | 4.2, 4.3 | ⏳ Pending | Use `MemorySaver` checkpointer; `interrupt_before` on `compile()` only |
+| **4.3** | Implement `route_after_fix()` conditional router (returns `"human_review"` if confidence < 80, else `"apply_fix"`) | Agent-D | 4.2 | ✅ Completed | [2026-07-11 21:10] [Agent-D] [HANDOFF] route_after_fix() implemented in src/agent/graph.py. Routes based on state['requires_human_review']. Branch: main. |
+| **4.4** | Build LangGraph state machine using corrected topology: all nodes declared, `human_review → apply_fix → END`, `interrupt_before=["human_review"]` in `src/agent/graph.py` | Agent-D | 4.2, 4.3 | ✅ Completed | [2026-07-11 21:10] [Agent-D] [HANDOFF] LangGraph agent compiled with MemorySaver checkpointer and interrupt_before=['human_review'] in src/agent/graph.py. Branch: main. |
 | **4.5** | Define Chain-of-Thought prompt templates in `src/agent/prompts.py` | Agent-D | 4.1 | ✅ Completed | Structured JSON output: root_cause, failure_category, fix_recommendation, confidence_score, knowledge_references<br>[2026-06-13 21:16] [Agent-D] [STATUS_CHANGE] Task started.<br>[2026-06-13 21:20] [Agent-D] [HANDOFF] Prompt templates with escaped schema curly braces defined in src/agent/prompts.py. Branch: feature/agent-d-phase1. → READY FOR Agent-D (Task 4.2), Agent-E |
-| **4.6** | End-to-end integration test: simulate each of 5 failure types → verify agent produces valid JSON diagnosis | Agent-D, Agent-E | 4.4, 4.5, 2.6, 3.4 | ⏳ Pending | Use mocked LLM responses to avoid API cost in CI |
-| **4.7** | Write unit tests for graph routing logic and state transitions in `tests/test_agent.py` | Agent-E | 4.4 | ⏳ Pending | Test: low-confidence routes to human_review; high-confidence skips it |
+| **4.6** | End-to-end integration test: simulate each of 5 failure types → verify agent produces valid JSON diagnosis | Agent-D, Agent-E | 4.4, 4.5, 2.6, 3.4 | ✅ Completed | [2026-07-11 21:10] [Agent-D] [HANDOFF] End-to-end simulation script implemented in scripts/test_agent_integration.py. Simulates all 5 failure categories, verifies structured diagnosis, and validates HITL pauses. Branch: main. |
+| **4.7** | Write unit tests for graph routing logic and state transitions in `tests/test_agent.py` | Agent-E | 4.4 | ✅ Completed | [2026-07-11 21:10] [Agent-E] [HANDOFF] Unit tests for graph routing logic, state transitions, and HITL interrupts implemented in tests/test_agent.py. All tests passing. Branch: main. |
 
 ---
 
@@ -188,10 +188,10 @@ Message here.
 | Phase 1 — Foundation | 8 | 8 | 0 | 0 | 0 |
 | Phase 2 — Detection | 8 | 8 | 0 | 0 | 0 |
 | Phase 3 — RAG | 8 | 8 | 0 | 0 | 0 |
-| Phase 4 — Agent | 7 | 3 | 0 | 0 | 4 |
+| Phase 4 — Agent | 7 | 7 | 0 | 0 | 0 |
 | Phase 5 — Healing | 7 | 2 | 0 | 0 | 5 |
 | Phase 6 — UI/API | 10 | 0 | 0 | 0 | 10 |
-| **TOTAL** | **48** | **29** | **0** | **0** | **19** |
+| **TOTAL** | **48** | **33** | **0** | **0** | **15** |
 
 ---
 

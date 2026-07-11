@@ -1,5 +1,5 @@
 import re
-from typing import Dict, Any, Optional
+from typing import Dict, Optional
 
 SYSTEM_FAILURE_PATTERNS = {
     "api_timeout": {
@@ -30,32 +30,24 @@ SYSTEM_FAILURE_PATTERNS = {
 }
 
 class SystemIssueDetector:
-    """Detector for system or infrastructure failures parsed from raw logs."""
+    """Detector for identifying infrastructure, API, and configuration issues from log snippets."""
 
-    def __init__(self, patterns: Optional[Dict[str, Dict[str, str]]] = None):
-        """Initializes the SystemIssueDetector.
+    def detect_from_log(self, log_message: str) -> Optional[Dict]:
+        """Scans a log message against predefined regex patterns to detect issues.
         
         Args:
-            patterns: Dictionary containing regex patterns and classification settings.
-                      Defaults to SYSTEM_FAILURE_PATTERNS if None.
-        """
-        self.patterns = patterns or SYSTEM_FAILURE_PATTERNS
-
-    def detect_from_log(self, log_message: str) -> Optional[Dict[str, Any]]:
-        """Scans a raw log message for regex matches corresponding to known failure modes.
-        
-        Args:
-            log_message: The raw text of the log line.
+            log_message: Raw log line or message.
             
         Returns:
-            Dictionary with classification and fix recommendation if a pattern matches, else None.
+            A dictionary containing issue details (type, severity, suggested_fix, log_snippet)
+            if a match is found, otherwise None.
         """
         if not log_message:
             return None
 
-        for issue_type, config in self.patterns.items():
-            pattern = config["pattern"]
-            if re.search(pattern, log_message, re.IGNORECASE):
+        for issue_type, config in SYSTEM_FAILURE_PATTERNS.items():
+            # Use IGNORECASE to make pattern matching case-insensitive and robust
+            if re.search(config["pattern"], log_message, re.IGNORECASE):
                 return {
                     "type": issue_type,
                     "severity": config["severity"],

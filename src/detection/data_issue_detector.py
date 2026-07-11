@@ -1,76 +1,59 @@
-import pandas as pd
 import numpy as np
-import scipy.stats
-from typing import Dict, Any
+import pandas as pd
+from scipy import stats
+from typing import Dict
 
 class DataIssueDetector:
-    """Detector for data quality issues, including covariate distribution drift and schema drift."""
+    """Detector for identifying covariate and schema drift between reference and production datasets."""
 
-    def detect_covariate_drift(self, reference_df: pd.DataFrame, production_df: pd.DataFrame) -> Dict[str, Any]:
-        """Checks numerical and categorical features for statistical distribution drift.
+    def detect_covariate_drift(self, reference_df: pd.DataFrame, production_df: pd.DataFrame) -> Dict:
+        """Check each overlapping feature for distribution shift/drift.
         
-        Uses two-sample Kolmogorov-Smirnov test for numerical features, and
-        Chi-squared contingency test for categorical features.
-        
-        Args:
-            reference_df: Baseline training or historical dataframe.
-            production_df: Observed production dataframe to check.
-            
-        Returns:
-            Dictionary mapping feature column names to their drift analysis results.
+        Uses the Kolmogorov-Smirnov (KS) test for numerical columns and the
+        Chi-Squared Contingency test for categorical columns.
         """
         results = {}
-        if reference_df.empty or production_df.empty:
-            return results
+        for col in reference_df.columns:
+            if col not in production_df.columns:
+                continue
 
-        # Only check columns that exist in both dataframes
-        shared_cols = reference_df.columns.intersection(production_df.columns)
-        
-        for col in shared_cols:
-            # Check numerical types
-            is_numeric = pd.api.types.is_numeric_dtype(reference_df[col]) and pd.api.types.is_numeric_dtype(production_df[col])
-            
-            if is_numeric:
-                ref_clean = reference_df[col].dropna()
-                prod_clean = production_df[col].dropna()
-                
-                # Check for empty samples
-                if ref_clean.empty or prod_clean.empty:
-                    continue
-                
-                # Run KS test
-                stat, p = scipy.stats.ks_2samp(ref_clean, prod_clean)
-                
-                # Check for NaN results (e.g. all values identical)
-                if np.isnan(p) or np.isnan(stat):
-                    results[col] = {
-                        "test": "KS",
-                        "statistic": 0.0,
-                        "p_value": 1.0,
-                        "drift": False
-                    }
-                else:
+            ref_col = reference_df[col].dropna()
+            prod_col = production_df[col].dropna()
+
+            # Skip if either is completely empty
+            if ref_col.empty or prod_col.empty:
+                continue
+
+            # Determine if numerical
+            if pd.api.types.is_numeric_dtype(reference_df[col]):
+                # Numerical features: KS two-sample test
+                try:
+                    stat, p = stats.ks_2samp(ref_col, prod_col)
+                    
+                    # Handle possible NaN outcomes from stats test
+                    if np.isnan(stat) or np.isnan(p):
+                        stat, p = 0.0, 1.0
+
                     results[col] = {
                         "test": "KS",
                         "statistic": float(stat),
                         "p_value": float(p),
                         "drift": bool(p < 0.05)
                     }
+                except Exception:
+                    results[col] = {
+                        "test": "KS",
+                        "statistic": 0.0,
+                        "p_value": 1.0,
+                        "drift": False
+                    }
             else:
-                ref_clean = reference_df[col].dropna()
-                prod_clean = production_df[col].dropna()
-                
-                # Check for empty samples
-                if ref_clean.empty or prod_clean.empty:
-                    continue
-                
-                # Build contingency table for Chi-squared test
-                ref_counts = ref_clean.value_counts()
-                prod_counts = prod_clean.value_counts()
-                
+                # Categorical features: chi-squared contingency test.
+                ref_counts = ref_col.value_counts()
+                prod_counts = prod_col.value_counts()
                 all_categories = ref_counts.index.union(prod_counts.index)
+
                 if len(all_categories) <= 1:
-                    # Cannot perform chi2 test with 1 or 0 categories
                     results[col] = {
                         "test": "chi2_contingency",
                         "statistic": 0.0,
@@ -79,14 +62,19 @@ class DataIssueDetector:
                         "drift": False
                     }
                     continue
-                
+
+                # Build aligned contingency dataframe
                 contingency = pd.DataFrame({
-                    "reference": ref_counts,
-                    "production": prod_counts
+                    'reference': ref_counts,
+                    'production': prod_counts
                 }).reindex(all_categories).fillna(0)
-                
+
                 try:
-                    chi2, p, dof, _ = scipy.stats.chi2_contingency(contingency.values)
+                    chi2, p, dof, _ = stats.chi2_contingency(contingency.values)
+                    
+                    if np.isnan(chi2) or np.isnan(p):
+                        chi2, p, dof = 0.0, 1.0, 0
+
                     results[col] = {
                         "test": "chi2_contingency",
                         "statistic": float(chi2),
@@ -102,31 +90,18 @@ class DataIssueDetector:
                         "dof": 0,
                         "drift": False
                     }
-                    
         return results
 
-    def detect_schema_drift(self, reference_schema: Dict[str, Any], production_schema: Dict[str, Any]) -> Dict[str, Any]:
-        """Compares schemas to identify missing columns, new columns, and type mismatches.
-        
-        Args:
-            reference_schema: Dictionary mapping column names to dtype strings (e.g. {'age': 'int64'}).
-            production_schema: Observed schema dictionary mapping column names to dtype strings.
-            
-        Returns:
-            Dictionary containing 'missing_columns', 'new_columns', and 'type_changes'.
-        """
+    def detect_schema_drift(self, reference_schema: Dict[str, str], production_schema: Dict[str, str]) -> Dict:
+        """Detect missing columns, new columns, and type changes between schemas."""
         ref_cols = set(reference_schema.keys())
         prod_cols = set(production_schema.keys())
-        
-        type_changes = {}
-        for col in ref_cols.intersection(prod_cols):
-            ref_type = str(reference_schema[col])
-            prod_type = str(production_schema[col])
-            if ref_type != prod_type:
-                type_changes[col] = (ref_type, prod_type)
-                
         return {
             "missing_columns": list(ref_cols - prod_cols),
             "new_columns": list(prod_cols - ref_cols),
-            "type_changes": type_changes
+            "type_changes": {
+                col: (str(reference_schema[col]), str(production_schema[col]))
+                for col in (ref_cols & prod_cols)
+                if reference_schema[col] != production_schema[col]
+            }
         }

@@ -1,52 +1,45 @@
-from typing import List, Dict, Any, Optional
+from typing import List, Dict, Optional
 
 class ModelPerformanceDetector:
-    """Detector for model performance degradation over a sliding window."""
+    """Detector for identifying model performance degradation over a sliding window."""
 
     def __init__(self, window_hours: int = 24, drop_threshold: float = 0.05):
-        """Initializes the ModelPerformanceDetector.
-        
-        Args:
-            window_hours: Sliding window size in hours (for configuration reference).
-            drop_threshold: Threshold change value to alert on (default: 0.05).
-        """
+        """Initializes the ModelPerformanceDetector with a sliding window size and drop threshold."""
         self.window_hours = window_hours
         self.drop_threshold = drop_threshold
 
-    def check_performance_drop(self, metrics_history: List[Dict[str, Any]]) -> Optional[Dict[str, Dict[str, Any]]]:
-        """Compares current performance to baseline within the metrics history.
+    def check_performance_drop(self, metrics_history: List[Dict]) -> Optional[Dict]:
+        """Compares the latest performance metrics to the baseline (the first metric in the window).
         
         Args:
-            metrics_history: Chronological list of metric dictionary records.
-                             Example: [{'timestamp': ..., 'accuracy': 0.85, 'f1': 0.80}]
+            metrics_history: List of metric dicts ordered by timestamp (oldest first).
+                             Each dict should contain keys like 'accuracy', 'f1', 'auc', and 'timestamp'.
                              
         Returns:
-            Dictionary containing metrics that dropped beyond the threshold, or None if no drop.
+            A dictionary containing details of metric drops if any drop exceeds the threshold,
+            otherwise None.
         """
         if len(metrics_history) < 2:
             return None
 
-        # Compare current (latest) to baseline (earliest)
+        # Compare current (latest) to baseline (first in window)
         baseline = metrics_history[0]
         current = metrics_history[-1]
 
         drops = {}
-        target_metrics = ["accuracy", "f1", "auc"]
-
-        for metric in target_metrics:
+        for metric in ["accuracy", "f1", "auc"]:
             if metric in baseline and metric in current:
-                val_baseline = baseline[metric]
-                val_current = current[metric]
+                if baseline[metric] is None or current[metric] is None:
+                    continue
                 
-                if val_baseline is not None and val_current is not None:
-                    delta = val_current - val_baseline
-                    # A drop is a negative change
-                    if delta < -self.drop_threshold:
-                        drops[metric] = {
-                            "baseline": float(val_baseline),
-                            "current": float(val_current),
-                            "drop": float(abs(delta)),
-                            "severity": "high" if abs(delta) > 0.15 else "medium"
-                        }
+                delta = current[metric] - baseline[metric]
+                # If the delta is a negative change worse than the threshold
+                if delta < -self.drop_threshold:
+                    drops[metric] = {
+                        "baseline": float(baseline[metric]),
+                        "current": float(current[metric]),
+                        "drop": float(abs(delta)),
+                        "severity": "high" if abs(delta) > 0.15 else "medium"
+                    }
 
         return drops if drops else None

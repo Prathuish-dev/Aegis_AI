@@ -132,7 +132,7 @@ Message here.
 | **3.5** | Implement `RAGEvaluator` using corrected RAGAS setup (list[list[str]] contexts, non-OpenAI LLM config) in `src/rag/evaluator.py` | Agent-C | 3.4 | ✅ Completed | [2026-07-11 21:00] [Agent-C] [HANDOFF] RAGEvaluator class implemented in src/rag/evaluator.py. Integrates RAGAS with custom LLM and embedding configurations, and normalizes contexts. Verified with unit tests. Branch: main. |
 | **3.6** | Implement `rebuild_knowledge_base.py` script to re-ingest all docs into ChromaDB | Agent-C | 3.3 | ✅ Completed | [2026-07-11 20:30] [Agent-C] [HANDOFF] rebuild_knowledge_base.py script implemented in scripts/. Supports resetting and fully rebuilding DB. Branch: feature/agent-e-phase2. |
 | **3.7** | Write unit tests for RAG retrieval quality in `tests/test_rag.py` | Agent-E | 3.4, 3.5 | ✅ Completed | [2026-07-11 20:35] [Agent-E] [HANDOFF] Unit tests for AegisRAG retrieval quality implemented in tests/test_rag.py. Verified 3 passing tests. Branch: feature/agent-e-phase2. |
-| **3.8** | Run manual RAG quality spot-check: all 5 golden test queries must return expected docs in top-3 | Agent-C, Agent-E | 3.7 | ⏳ Pending | Document retrieval scores in test notes |
+| **3.8** | Run manual RAG quality spot-check: all 5 golden test queries must return expected docs in top-3 | Agent-C, Agent-E | 3.7 | ✅ Completed | [2026-07-11 21:05] [Agent-C] [HANDOFF] Manual spot-check executed via scripts/spot_check_rag.py. All 5 golden queries successfully retrieved expected docs in top 3. Branch: main. |
 
 ---
 
@@ -187,11 +187,11 @@ Message here.
 |---|---|---|---|---|---|
 | Phase 1 — Foundation | 8 | 8 | 0 | 0 | 0 |
 | Phase 2 — Detection | 8 | 8 | 0 | 0 | 0 |
-| Phase 3 — RAG | 8 | 7 | 0 | 0 | 1 |
+| Phase 3 — RAG | 8 | 8 | 0 | 0 | 0 |
 | Phase 4 — Agent | 7 | 3 | 0 | 0 | 4 |
 | Phase 5 — Healing | 7 | 2 | 0 | 0 | 5 |
 | Phase 6 — UI/API | 10 | 0 | 0 | 0 | 10 |
-| **TOTAL** | **48** | **28** | **0** | **0** | **20** |
+| **TOTAL** | **48** | **29** | **0** | **0** | **19** |
 
 ---
 

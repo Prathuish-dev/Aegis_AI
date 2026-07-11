@@ -117,7 +117,7 @@ Message here.
 | **2.5** | Implement module-level `RelevanceScorer` singleton (SentenceTransformer loaded once) in `src/detection/relevance_scorer.py` | Agent-B | 1.3 | ✅ Completed | [2026-07-11 20:05] [Agent-B] [HANDOFF] RelevanceScorer class implemented in src/detection/relevance_scorer.py. Loads model BAAI/bge-small-en-v1.5 once as singleton. Exposes score() and is_hallucinating(). Branch: feature/agent-b-phase2. → READY FOR Agent-D, Agent-E |
 | **2.6** | Implement unified `AnomalyDetector` facade combining 2.1–2.5, outputting `AnomalyEvent` schema | Agent-B | 2.1, 2.2, 2.3, 2.4, 2.5 | ✅ Completed | [2026-07-11 20:05] [Agent-B] [HANDOFF] AnomalyDetector facade implemented in src/detection/anomaly_detector.py. Integrates all detectors and maps outputs to AnomalyEvent Pydantic schemas. Branch: feature/agent-b-phase2. → READY FOR Agent-D, Agent-E |
 | **2.7** | Implement `SystemIssueDetector` with regex-based log pattern matching in `src/detection/system_issue_detector.py` | Agent-B | 1.4 | ✅ Completed | [2026-07-11 20:05] [Agent-B] [HANDOFF] SystemIssueDetector implemented in src/detection/system_issue_detector.py. Exposes detect_from_log(). Branch: feature/agent-b-phase2. → READY FOR Agent-D, Agent-E |
-| **2.8** | Write unit tests for all detectors in `tests/test_detection.py` | Agent-E | 2.1–2.7 | ⏳ Pending | Cover: no drift, drift detected, edge cases (empty arrays, single element) |
+| **2.8** | Write unit tests for all detectors in `tests/test_detection.py` | Agent-E | 2.1–2.7 | 🔄 In Progress | [2026-07-11 20:06] [Agent-E] [STATUS_CHANGE] Task started. |
 
 ---
 
@@ -159,7 +159,7 @@ Message here.
 | **5.3** | Implement `LLMQualityDetector` with `_llm_faithfulness_check()` (LLM-as-Judge replacing embedding similarity) in `src/healing/llm_quality_detector.py` | Agent-B | 2.5 | ⏳ Pending | JSON output: `{"faithful": bool, "reason": str}` with parse-error fallback |
 | **5.4** | Implement `RetrievalQualityDetector` with pairwise document embedding comparison for duplicate detection in `src/detection/retrieval_quality_detector.py` | Agent-B | 2.5 | ⏳ Pending | Compare doc embeddings against each other, not against query scores |
 | **5.5** | Implement post-fix verifier that re-triggers monitoring on healed system to confirm recovery in `src/healing/verifier.py` | Agent-D | 5.1, 2.6 | ⏳ Pending | Polls metric for 10 min post-fix; logs `healed` or `unresolved` |
-| **5.6** | Implement structured audit logger: record every autonomous action with timestamp, agent, action, outcome in `src/healing/audit_logger.py` | Agent-A | 1.4 | ⏳ Pending | Append to SQLite `audit_log` table |
+| **5.6** | Implement structured audit logger: record every autonomous action with timestamp, agent, action, outcome in `src/healing/audit_logger.py` | Agent-A | 1.4 | ✅ Completed | Append to SQLite `audit_log` table<br>[2026-07-11 20:06] [Agent-A] [STATUS_CHANGE] Task started.<br>[2026-07-11 20:10] [Agent-A] [HANDOFF] AuditLogger class implemented. Exposes log_action() and get_audit_history(). File: src/healing/audit_logger.py. Branch: feature/agent-a-phase5. → READY FOR Agent-D, Agent-E |
 | **5.7** | Write integration tests: simulate accuracy drop → auto-fix suggestion → verify audit log entry | Agent-E | 5.1–5.6 | ⏳ Pending | Assert fix suggestion contains required fields |
 
 ---
@@ -189,9 +189,9 @@ Message here.
 | Phase 2 — Detection | 8 | 8 | 0 | 0 | 0 |
 | Phase 3 — RAG | 8 | 6 | 0 | 0 | 2 |
 | Phase 4 — Agent | 7 | 3 | 0 | 0 | 4 |
-| Phase 5 — Healing | 7 | 1 | 0 | 0 | 6 |
+| Phase 5 — Healing | 7 | 2 | 0 | 0 | 5 |
 | Phase 6 — UI/API | 10 | 0 | 0 | 0 | 10 |
-| **TOTAL** | **48** | **26** | **0** | **0** | **22** |
+| **TOTAL** | **48** | **27** | **0** | **0** | **21** |
 
 ---
 

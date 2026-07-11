@@ -117,7 +117,7 @@ Message here.
 | **2.5** | Implement module-level `RelevanceScorer` singleton (SentenceTransformer loaded once) in `src/detection/relevance_scorer.py` | Agent-B | 1.3 | ✅ Completed | [2026-07-11 20:05] [Agent-B] [HANDOFF] RelevanceScorer class implemented in src/detection/relevance_scorer.py. Loads model BAAI/bge-small-en-v1.5 once as singleton. Exposes score() and is_hallucinating(). Branch: feature/agent-b-phase2. → READY FOR Agent-D, Agent-E |
 | **2.6** | Implement unified `AnomalyDetector` facade combining 2.1–2.5, outputting `AnomalyEvent` schema | Agent-B | 2.1, 2.2, 2.3, 2.4, 2.5 | ✅ Completed | [2026-07-11 20:05] [Agent-B] [HANDOFF] AnomalyDetector facade implemented in src/detection/anomaly_detector.py. Integrates all detectors and maps outputs to AnomalyEvent Pydantic schemas. Branch: feature/agent-b-phase2. → READY FOR Agent-D, Agent-E |
 | **2.7** | Implement `SystemIssueDetector` with regex-based log pattern matching in `src/detection/system_issue_detector.py` | Agent-B | 1.4 | ✅ Completed | [2026-07-11 20:05] [Agent-B] [HANDOFF] SystemIssueDetector implemented in src/detection/system_issue_detector.py. Exposes detect_from_log(). Branch: feature/agent-b-phase2. → READY FOR Agent-D, Agent-E |
-| **2.8** | Write unit tests for all detectors in `tests/test_detection.py` | Agent-E | 2.1–2.7 | 🔄 In Progress | [2026-07-11 20:06] [Agent-E] [STATUS_CHANGE] Task started. |
+| **2.8** | Write unit tests for all detectors in `tests/test_detection.py` | Agent-E | 2.1–2.7 | ✅ Completed | [2026-07-11 20:20] [Agent-E] [HANDOFF] Unit tests for all 6 detectors and the AnomalyDetector facade implemented in tests/test_detection.py. Verified 34 passing tests. Branch: feature/agent-e-phase2. → READY FOR All Agents |
 
 ---
 

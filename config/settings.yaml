@@ -1,0 +1,26 @@
+database:
+  log_db_path: "data/logs/events.db"
+
+thresholds:
+  accuracy:
+    metric_type: "accuracy"
+    operator: "delta_pct"
+    threshold: -0.05
+    severity: "high"
+    window_seconds: 3600
+  latency:
+    metric_type: "latency"
+    operator: "gt"
+    threshold: 2000.0  # Milliseconds (P95)
+    severity: "medium"
+    window_seconds: 3600
+  error_rate:
+    metric_type: "error_rate"
+    operator: "gt"
+    threshold: 0.02  # 2%
+    severity: "critical"
+    window_seconds: 3600
+
+model_parameters:
+  relevance_threshold: 0.5
+  confidence_threshold: 80.0

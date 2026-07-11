@@ -1,0 +1,8 @@
+{
+  "incident_id": "INC-2026-002",
+  "failure_type": "model_issue",
+  "root_cause": "An upstream database update in the feature store introduced a target leakage bug where the training pipeline incorporated tomorrow's transaction data to calculate today's feature values. This led to high validation metrics in development but a severe accuracy drop from 91% to 54% when served online.",
+  "fix_applied": "Reconfigured the feature store time-travel logic to exclude transaction timestamps equal to or greater than the prediction timestamp. Re-aggregated features, retrained the model (version v2.1), and deployed it to the staging environment before routing traffic.",
+  "outcome": "Resolved. Production accuracy recovered to 89% and matched offline validation metrics without further anomalies.",
+  "tags": ["accuracy_drop", "data_leakage", "feature_engineering", "model_retraining"]
+}

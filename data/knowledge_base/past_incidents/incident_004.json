@@ -1,0 +1,8 @@
+{
+  "incident_id": "INC-2026-004",
+  "failure_type": "system_issue",
+  "root_cause": "A memory leak occurred in the RAG retrieval server because the embedding transformer model was instantiated inside the query helper function rather than as a global singleton. On heavy traffic, concurrent requests caused multiple instances of the transformer to load into memory, exhausting host RAM and triggering OS SIGKILL (exit code 137).",
+  "fix_applied": "Refactored `src/detection/relevance_scorer.py` to load the `BAAI/bge-small-en-v1.5` SentenceTransformer model exactly once at module startup, converting it to a singleton. Added garbage collection hooks after heavy retrieval executions.",
+  "outcome": "Resolved. Memory usage stabilized at a flat 1.2GB without showing linear growth trends under concurrent load testing.",
+  "tags": ["system_oom", "memory_leak", "singleton_pattern", "embedding_service"]
+}

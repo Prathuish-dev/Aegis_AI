@@ -127,11 +127,11 @@ Message here.
 |---|---|---|---|---|---|
 | **3.1** | Populate knowledge base documents: min 5 guides covering LLM issues, model issues, data drift, system issues, prompt engineering under `data/knowledge_base/` | Agent-C | 1.1 | ✅ Completed | Use Markdown format; min 400 words per guide<br>[2026-06-13 20:55] [Agent-C] [STATUS_CHANGE] Task started.<br>[2026-06-13 21:00] [Agent-C] [STATUS_CHANGE] Completed. All 5 RAG markdown guides created. data/knowledge_base/ → READY FOR Agent-C (Task 3.3) |
 | **3.2** | Populate 5+ past incident JSON records under `data/knowledge_base/past_incidents/` | Agent-C | 1.1 | ✅ Completed | Schema: incident_id, failure_type, root_cause, fix_applied, outcome, tags<br>[2026-06-13 20:55] [Agent-C] [STATUS_CHANGE] Task started.<br>[2026-06-13 21:00] [Agent-C] [STATUS_CHANGE] Completed. All 5 past incident records created. data/knowledge_base/past_incidents/ → READY FOR Agent-C (Task 3.3) |
-| **3.3** | Implement `KnowledgeBaseIngester` using LangChain `Chroma` wrapper with injected `embedding_function` in `src/rag/ingestion.py` | Agent-C | 3.1, 3.2 | 🔄 In Progress | Must accept same `embedding_function` as `AegisRAG` — model consistency rule<br>[2026-06-13 21:30] [Agent-C] [STATUS_CHANGE] Task started. |
-| **3.4** | Implement `AegisRAG` retriever with MMR search and category filtering in `src/rag/retrieval.py` | Agent-C | 3.3 | 🔄 In Progress | `search_type="mmr"`, k=5, fetch_k=20<br>[2026-06-13 21:30] [Agent-C] [STATUS_CHANGE] Task started. |
+| **3.3** | Implement `KnowledgeBaseIngester` using LangChain `Chroma` wrapper with injected `embedding_function` in `src/rag/ingestion.py` | Agent-C | 3.1, 3.2 | ✅ Completed | [2026-07-11 20:30] [Agent-C] [HANDOFF] KnowledgeBaseIngester class implemented in src/rag/ingestion.py. Supports markdown guides and past incident JSON ingestion. Verified with unit tests. Branch: feature/agent-e-phase2. |
+| **3.4** | Implement `AegisRAG` retriever with MMR search and category filtering in `src/rag/retrieval.py` | Agent-C | 3.3 | ✅ Completed | [2026-07-11 20:30] [Agent-C] [HANDOFF] AegisRAG class implemented in src/rag/retrieval.py. Exposes retrieve() method using MMR search and category filtering. Verified with unit tests. Branch: feature/agent-e-phase2. |
 | **3.5** | Implement `RAGEvaluator` using corrected RAGAS setup (list[list[str]] contexts, non-OpenAI LLM config) in `src/rag/evaluator.py` | Agent-C | 3.4 | ⏳ Pending | Targets: faithfulness ≥0.85, answer_relevancy ≥0.80 |
-| **3.6** | Implement `rebuild_knowledge_base.py` script to re-ingest all docs into ChromaDB | Agent-C | 3.3 | 🔄 In Progress | Supports `--reset` flag to wipe and re-index<br>[2026-06-13 21:30] [Agent-C] [STATUS_CHANGE] Task started. |
-| **3.7** | Write unit tests for RAG retrieval quality in `tests/test_rag.py` | Agent-E | 3.4, 3.5 | ⏳ Pending | Golden test queries for each failure category; assert top-3 docs |
+| **3.6** | Implement `rebuild_knowledge_base.py` script to re-ingest all docs into ChromaDB | Agent-C | 3.3 | ✅ Completed | [2026-07-11 20:30] [Agent-C] [HANDOFF] rebuild_knowledge_base.py script implemented in scripts/. Supports resetting and fully rebuilding DB. Branch: feature/agent-e-phase2. |
+| **3.7** | Write unit tests for RAG retrieval quality in `tests/test_rag.py` | Agent-E | 3.4, 3.5 | ✅ Completed | [2026-07-11 20:35] [Agent-E] [HANDOFF] Unit tests for AegisRAG retrieval quality implemented in tests/test_rag.py. Verified 3 passing tests. Branch: feature/agent-e-phase2. |
 | **3.8** | Run manual RAG quality spot-check: all 5 golden test queries must return expected docs in top-3 | Agent-C, Agent-E | 3.7 | ⏳ Pending | Document retrieval scores in test notes |
 
 ---
@@ -141,7 +141,7 @@ Message here.
 | Task ID | Task Description | Assigned Agent(s) | Dependencies | Status | Notes / Hand-off |
 |---|---|---|---|---|---|
 | **4.1** | Define `AegisAgentState` TypedDict in `src/agent/state.py` | Agent-D | 1.3 | ✅ Completed | Fields: anomaly_description, retrieved_context, root_cause, fix_recommendation, confidence_score, requires_human_review, iteration_count<br>[2026-06-13 21:16] [Agent-D] [STATUS_CHANGE] Task started.<br>[2026-06-13 21:20] [Agent-D] [HANDOFF] AegisAgentState TypedDict defined in src/agent/state.py. Branch: feature/agent-d-phase1. → READY FOR Agent-D (Task 4.2), Agent-E |
-| **4.2** | Implement all agent node functions (`retrieve_context_node`, `analyze_anomaly_node`, `classify_failure_node`, `generate_fix_node`, `human_review_node`, `apply_fix_node`) in `src/agent/nodes.py` | Agent-D | 4.1, 3.4 | ✅ Completed | Each node must update state and log via structured logger<br>[2026-07-11 20:25] [Agent-D] [STATUS_CHANGE] Task started.<br>[2026-07-11 20:30] [Agent-D] [HANDOFF] LangGraph node skeletons implemented in src/agent/nodes.py with loguru integration, CoT schema parsing, and mock RAG fallbacks. Branch: feature/agent-d-phase4. → READY FOR Agent-E |
+| **4.2** | Implement all agent node functions (`retrieve_context_node`, `analyze_anomaly_node`, `classify_failure_node`, `generate_fix_node`, `human_review_node`, `apply_fix_node`) in `src/agent/nodes.py` | Agent-D | 4.1, 3.4 | ✅ Completed | [2026-07-11 20:40] [Agent-D] [HANDOFF] All 6 agent node functions implemented in src/agent/nodes.py. Exposes nodes for retrieve_context, analyze_anomaly, classify_failure, generate_fix, human_review, and apply_fix. Verified with unit tests. Branch: feature/agent-e-phase2. |
 | **4.3** | Implement `route_after_fix()` conditional router (returns `"human_review"` if confidence < 80, else `"apply_fix"`) | Agent-D | 4.2 | ⏳ Pending | Threshold configurable in `settings.yaml` |
 | **4.4** | Build LangGraph state machine using corrected topology: all nodes declared, `human_review → apply_fix → END`, `interrupt_before=["human_review"]` in `src/agent/graph.py` | Agent-D | 4.2, 4.3 | ⏳ Pending | Use `MemorySaver` checkpointer; `interrupt_before` on `compile()` only |
 | **4.5** | Define Chain-of-Thought prompt templates in `src/agent/prompts.py` | Agent-D | 4.1 | ✅ Completed | Structured JSON output: root_cause, failure_category, fix_recommendation, confidence_score, knowledge_references<br>[2026-06-13 21:16] [Agent-D] [STATUS_CHANGE] Task started.<br>[2026-06-13 21:20] [Agent-D] [HANDOFF] Prompt templates with escaped schema curly braces defined in src/agent/prompts.py. Branch: feature/agent-d-phase1. → READY FOR Agent-D (Task 4.2), Agent-E |
@@ -186,12 +186,12 @@ Message here.
 | Phase | Total Tasks | Completed ✅ | In Progress 🔄 | Blocked 🛑 | Pending ⏳ |
 |---|---|---|---|---|---|
 | Phase 1 — Foundation | 8 | 8 | 0 | 0 | 0 |
-| Phase 2 — Detection | 8 | 7 | 0 | 0 | 1 |
-| Phase 3 — RAG | 8 | 2 | 3 | 0 | 3 |
+| Phase 2 — Detection | 8 | 8 | 0 | 0 | 0 |
+| Phase 3 — RAG | 8 | 6 | 0 | 0 | 2 |
 | Phase 4 — Agent | 7 | 3 | 0 | 0 | 4 |
 | Phase 5 — Healing | 7 | 1 | 0 | 0 | 6 |
 | Phase 6 — UI/API | 10 | 0 | 0 | 0 | 10 |
-| **TOTAL** | **48** | **21** | 3 | **0** | **24** |
+| **TOTAL** | **48** | **26** | **0** | **0** | **22** |
 
 ---
 

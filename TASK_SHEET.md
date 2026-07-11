@@ -129,7 +129,7 @@ Message here.
 | **3.2** | Populate 5+ past incident JSON records under `data/knowledge_base/past_incidents/` | Agent-C | 1.1 | ✅ Completed | Schema: incident_id, failure_type, root_cause, fix_applied, outcome, tags<br>[2026-06-13 20:55] [Agent-C] [STATUS_CHANGE] Task started.<br>[2026-06-13 21:00] [Agent-C] [STATUS_CHANGE] Completed. All 5 past incident records created. data/knowledge_base/past_incidents/ → READY FOR Agent-C (Task 3.3) |
 | **3.3** | Implement `KnowledgeBaseIngester` using LangChain `Chroma` wrapper with injected `embedding_function` in `src/rag/ingestion.py` | Agent-C | 3.1, 3.2 | ✅ Completed | [2026-07-11 20:30] [Agent-C] [HANDOFF] KnowledgeBaseIngester class implemented in src/rag/ingestion.py. Supports markdown guides and past incident JSON ingestion. Verified with unit tests. Branch: feature/agent-e-phase2. |
 | **3.4** | Implement `AegisRAG` retriever with MMR search and category filtering in `src/rag/retrieval.py` | Agent-C | 3.3 | ✅ Completed | [2026-07-11 20:30] [Agent-C] [HANDOFF] AegisRAG class implemented in src/rag/retrieval.py. Exposes retrieve() method using MMR search and category filtering. Verified with unit tests. Branch: feature/agent-e-phase2. |
-| **3.5** | Implement `RAGEvaluator` using corrected RAGAS setup (list[list[str]] contexts, non-OpenAI LLM config) in `src/rag/evaluator.py` | Agent-C | 3.4 | ⏳ Pending | Targets: faithfulness ≥0.85, answer_relevancy ≥0.80 |
+| **3.5** | Implement `RAGEvaluator` using corrected RAGAS setup (list[list[str]] contexts, non-OpenAI LLM config) in `src/rag/evaluator.py` | Agent-C | 3.4 | ✅ Completed | [2026-07-11 21:00] [Agent-C] [HANDOFF] RAGEvaluator class implemented in src/rag/evaluator.py. Integrates RAGAS with custom LLM and embedding configurations, and normalizes contexts. Verified with unit tests. Branch: main. |
 | **3.6** | Implement `rebuild_knowledge_base.py` script to re-ingest all docs into ChromaDB | Agent-C | 3.3 | ✅ Completed | [2026-07-11 20:30] [Agent-C] [HANDOFF] rebuild_knowledge_base.py script implemented in scripts/. Supports resetting and fully rebuilding DB. Branch: feature/agent-e-phase2. |
 | **3.7** | Write unit tests for RAG retrieval quality in `tests/test_rag.py` | Agent-E | 3.4, 3.5 | ✅ Completed | [2026-07-11 20:35] [Agent-E] [HANDOFF] Unit tests for AegisRAG retrieval quality implemented in tests/test_rag.py. Verified 3 passing tests. Branch: feature/agent-e-phase2. |
 | **3.8** | Run manual RAG quality spot-check: all 5 golden test queries must return expected docs in top-3 | Agent-C, Agent-E | 3.7 | ⏳ Pending | Document retrieval scores in test notes |
@@ -187,11 +187,11 @@ Message here.
 |---|---|---|---|---|---|
 | Phase 1 — Foundation | 8 | 8 | 0 | 0 | 0 |
 | Phase 2 — Detection | 8 | 8 | 0 | 0 | 0 |
-| Phase 3 — RAG | 8 | 6 | 0 | 0 | 2 |
+| Phase 3 — RAG | 8 | 7 | 0 | 0 | 1 |
 | Phase 4 — Agent | 7 | 3 | 0 | 0 | 4 |
 | Phase 5 — Healing | 7 | 2 | 0 | 0 | 5 |
 | Phase 6 — UI/API | 10 | 0 | 0 | 0 | 10 |
-| **TOTAL** | **48** | **27** | **0** | **0** | **21** |
+| **TOTAL** | **48** | **28** | **0** | **0** | **20** |
 
 ---
 

@@ -15,11 +15,11 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     gcc \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy only requirements first for layer caching
-COPY requirements.txt .
+# Use lean API-only requirements (excludes torch/sentence-transformers/ragas)
+# This keeps the image small (~500MB vs ~4GB with full requirements)
+COPY requirements.api.txt .
 RUN pip install --upgrade pip && \
-    pip install --prefix=/install --no-cache-dir -r requirements.txt && \
-    pip install --prefix=/install --no-cache-dir uvicorn[standard] fastapi
+    pip install --prefix=/install --no-cache-dir -r requirements.api.txt
 
 # ---- Stage 2: Runtime image ----
 FROM python:3.11-slim AS runtime

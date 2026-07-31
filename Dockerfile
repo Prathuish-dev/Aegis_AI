@@ -1,41 +1,31 @@
 # ============================================================
-# Aegis AI — FastAPI Backend Dockerfile
-# Multi-stage build: python:3.11-slim base
+# Aegis AI — FastAPI Backend Dockerfile (single-stage)
+# Uses lean requirements.api.txt — no torch/sentence-transformers
 # Exposes port 8000
 # ============================================================
 
-# ---- Stage 1: Build dependencies ----
-FROM python:3.11-slim AS builder
+FROM python:3.11-slim
 
-WORKDIR /build
+WORKDIR /app
 
-# Install build tools
+# Install build tools (needed for some packages like grpcio)
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     gcc \
     && rm -rf /var/lib/apt/lists/*
 
-# Use lean API-only requirements (excludes torch/sentence-transformers/ragas)
-# This keeps the image small (~500MB vs ~4GB with full requirements)
+# Install Python dependencies
 COPY requirements.api.txt .
 RUN pip install --upgrade pip && \
-    pip install --prefix=/install --no-cache-dir -r requirements.api.txt
-
-# ---- Stage 2: Runtime image ----
-FROM python:3.11-slim AS runtime
-
-WORKDIR /app
-
-# Copy installed packages from builder
-COPY --from=builder /install /usr/local
+    pip install --no-cache-dir -r requirements.api.txt
 
 # Copy application source
 COPY src/ ./src/
 COPY config/ ./config/
 COPY data/ ./data/
 
-# Create data directories that the app writes to
-RUN mkdir -p data/logs data/knowledge_base
+# Create runtime data directories
+RUN mkdir -p data/logs data/chroma_db data/knowledge_base
 
 # Environment defaults (override via docker-compose .env)
 ENV PYTHONPATH=/app \
